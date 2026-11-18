@@ -1,0 +1,22 @@
+{
+  "name": "MY APP CENTER",
+  "short_name": "App Center",
+  "description": "Katalog, manajemen, dan akses cepat seluruh aplikasi Google Apps Script.",
+  "id": "./",
+  "start_url": "./?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "orientation": "any",
+  "background_color": "#0b1020",
+  "theme_color": "#1e3a8a",
+  "lang": "id",
+  "categories": ["productivity", "business", "utilities"],
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Katalog cepat", "short_name": "Katalog", "url": "./?mode=catalog", "icons": [{ "src": "icon.svg", "sizes": "any" }] }
+  ]
+}

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1e3a8a">
+<meta name="description" content="MY APP CENTER — katalog & akses cepat seluruh aplikasi Google Apps Script Anda.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="App Center">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>MY APP CENTER</title>
+<style>
+/* =========================================================================
+   KONFIGURASI: isi URL Web App GAS Anda (deployment /exec) di bawah ini.
+   ========================================================================= */
+</style>
+<script>window.MAC_GAS_URL = 'https://script.google.com/macros/s/AKfycbzy9nuVLhVe5KraQcndBkK3pAvKw0u_XCWS29JjNjoQIDOlaVPG5-AyEhLHrsSIPHNh/exec'; /* contoh: 'https://script.google.com/macros/s/AKfycb.../exec' */</script>
+<style>
+:root{--b:#1e3a8a;--b2:#4f46e5;--bg:#f4f6fb;--s:#fff;--t:#0f172a;--m:#64748b;--bd:#e5e9f2;--soft:rgba(79,70,229,.1)}
+@media (prefers-color-scheme:dark){:root{--bg:#0b1020;--s:#121a2e;--t:#e5e9f5;--m:#94a3b8;--bd:#223052;--soft:rgba(129,140,248,.16)}}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--t);font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif}
+.hidden{display:none!important}
+#frame{position:fixed;inset:0;width:100%;height:100%;border:0;background:var(--bg)}
+#splash{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--bg);z-index:5;transition:opacity .3s}
+#splash img{width:84px;height:84px;border-radius:22px;box-shadow:0 12px 30px rgba(30,58,138,.3)}
+#splash p{margin:0;color:var(--m);font-size:14px}
+.spin{width:26px;height:26px;border-radius:50%;border:3px solid var(--bd);border-top-color:var(--b2);animation:sp .8s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+.fab{position:fixed;right:14px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:6;display:flex;flex-direction:column;gap:8px}
+.fab button{width:44px;height:44px;border-radius:14px;border:1px solid var(--bd);background:var(--s);color:var(--t);box-shadow:0 8px 20px rgba(0,0,0,.15);cursor:pointer;font-size:18px}
+@media(min-width:901px){.fab{bottom:18px}}
+/* katalog offline */
+#cat{position:fixed;inset:0;overflow-y:auto;background:var(--bg);z-index:7}
+.top{position:sticky;top:0;z-index:2;background:linear-gradient(135deg,var(--b),var(--b2));color:#fff;padding:calc(16px + env(safe-area-inset-top)) 18px 16px}
+.top-row{display:flex;align-items:center;gap:12px}
+.top img{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.2)}
+.top h1{margin:0;font-size:18px}.top small{opacity:.85}
+.top .x{margin-left:auto;border:0;background:rgba(255,255,255,.18);color:#fff;border-radius:12px;padding:9px 12px;cursor:pointer;font-weight:600}
+.top input{margin-top:14px;width:100%;padding:12px 14px;border-radius:12px;border:0;font-size:15px;background:rgba(255,255,255,.95);color:#0f172a}
+.note{margin:14px 16px 0;padding:12px 14px;border-radius:12px;background:var(--soft);border:1px solid var(--bd);font-size:13.5px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:14px 16px 4px}
+.chip{white-space:nowrap;padding:7px 12px;border-radius:999px;border:1px solid var(--bd);background:var(--s);font-size:13px;font-weight:600;cursor:pointer;color:var(--t)}
+.chip.on{background:var(--b2);border-color:var(--b2);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;padding:14px 16px calc(30px + env(safe-area-inset-bottom))}
+.card{background:var(--s);border:1px solid var(--bd);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.card .h{display:flex;gap:12px;align-items:center}
+.ic{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--soft);flex:none}
+.card b{display:block}.card small{color:var(--m);font-size:12.5px}
+.card p{margin:0;color:var(--m);font-size:13.5px;line-height:1.45}
+.open{display:block;text-align:center;padding:10px;border-radius:12px;background:linear-gradient(135deg,var(--b),var(--b2));color:#fff;text-decoration:none;font-weight:600;font-size:14px}
+.empty{padding:40px 20px;text-align:center;color:var(--m)}
+/* setup */
+#setup{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;z-index:8;background:var(--bg)}
+#setup .box{width:min(520px,100%);background:var(--s);border:1px solid var(--bd);border-radius:20px;padding:26px;box-shadow:0 20px 50px rgba(0,0,0,.12)}
+#setup h2{margin:12px 0 6px}#setup p{color:var(--m);font-size:14px;line-height:1.5}
+#setup input{width:100%;padding:12px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);color:var(--t);font-size:14px;margin:8px 0 12px}
+#setup button,.btn{padding:12px 16px;border:0;border-radius:12px;background:linear-gradient(135deg,var(--b),var(--b2));color:#fff;font-weight:700;cursor:pointer;font-size:14px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#0f172a;color:#fff;padding:12px 16px;border-radius:12px;font-size:14px;z-index:20;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+</style>
+</head>
+<body>
+<div id="splash"><img src="icon.svg" alt=""><div class="spin"></div><p id="splashTxt">Memuat MY APP CENTER…</p></div>
+
+<iframe id="frame" class="hidden" title="MY APP CENTER" allow="clipboard-read; clipboard-write; fullscreen"></iframe>
+
+<div class="fab hidden" id="fab">
+  <button id="btnCat" title="Katalog cepat / offline" aria-label="Katalog cepat">☰</button>
+  <button id="btnInstall" class="hidden" title="Pasang aplikasi" aria-label="Pasang aplikasi">⤓</button>
+</div>
+
+<section id="cat" class="hidden" aria-label="Katalog">
+  <div class="top"><div class="top-row"><img src="icon.svg" alt=""><div><h1 id="cTitle">MY APP CENTER</h1><small id="cSub">Katalog cepat</small></div><button class="x" id="cClose">Buka portal</button></div>
+    <input id="cQ" type="search" placeholder="Cari aplikasi…" autocomplete="off"></div>
+  <div class="note hidden" id="cNote"></div>
+  <div class="chips" id="cChips"></div>
+  <div class="grid" id="cGrid"></div>
+</section>
+
+<section id="setup" class="hidden">
+  <div class="box"><img src="icon.svg" alt="" width="56" height="56">
+    <h2>Hubungkan ke Web App GAS</h2>
+    <p>Tempel URL deployment Web App Apps Script Anda (berakhiran <code>/exec</code>). URL disimpan di perangkat ini. Untuk permanen, isi <code>window.MAC_GAS_URL</code> di <code>index.html</code>.</p>
+    <input id="sUrl" inputmode="url" placeholder="https://script.google.com/macros/s/…/exec">
+    <button id="sGo">Simpan &amp; buka</button>
+  </div>
+</section>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var LS = { get: function (k) { try { return localStorage.getItem('mac_' + k); } catch (e) { return null; } }, set: function (k, v) { try { localStorage.setItem('mac_' + k, v); } catch (e) { } } };
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function toast(m, ms) { var t = document.createElement('div'); t.className = 'toast'; t.textContent = m; document.body.appendChild(t); setTimeout(function () { t.remove(); }, ms || 2200); }
+  function validGas(u) { return /^https:\/\/script\.google\.com\/(a\/[^/]+\/)?macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(u) || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//.test(u); }
+
+  var qs = new URLSearchParams(location.search);
+  if (qs.get('gas') && validGas(qs.get('gas'))) LS.set('gas', qs.get('gas'));
+  var GAS = window.MAC_GAS_URL || LS.get('gas') || '';
+  var catalog = null; try { catalog = JSON.parse(LS.get('pub') || 'null'); } catch (e) { }
+  var cat = '', frameLoaded = false;
+
+  /* ---------- Service worker ---------- */
+  if ('serviceWorker' in navigator) window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () { }); });
+
+  /* ---------- Tombol Back tidak menutup aplikasi ---------- */
+  var armed = 0;
+  history.replaceState({ mac: 'base' }, '');
+  history.pushState({ mac: 'guard' }, '');
+  window.addEventListener('popstate', function (e) {
+    if (!$('cat').classList.contains('hidden') && GAS && navigator.onLine && frameLoaded) { showCatalog(false); history.pushState({ mac: 'guard' }, ''); return; }
+    if (Date.now() - armed < 2200) { history.back(); return; }
+    armed = Date.now(); history.pushState({ mac: 'guard' }, '');
+    toast('Tekan Kembali sekali lagi untuk keluar');
+  });
+
+  /* ---------- Install PWA ---------- */
+  var deferred = null;
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e; $('btnInstall').classList.remove('hidden'); });
+  $('btnInstall').onclick = function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $('btnInstall').classList.add('hidden'); }); };
+  window.addEventListener('appinstalled', function () { toast('Aplikasi terpasang'); });
+
+  /* ---------- Katalog publik (cache offline) ---------- */
+  function fetchCatalog() {
+    if (!GAS) return Promise.resolve(null);
+    return fetch(GAS + (GAS.indexOf('?') >= 0 ? '&' : '?') + 'api=public', { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (j) { if (j && Array.isArray(j.apps)) { j._cached_at = new Date().toISOString(); catalog = j; LS.set('pub', JSON.stringify(j)); if (!$('cat').classList.contains('hidden')) drawCatalog(); } return j; })
+      .catch(function () { return null; });
+  }
+  function drawCatalog() {
+    var c = catalog || { apps: [], categories: [] }, q = ($('cQ').value || '').toLowerCase().trim();
+    $('cTitle').textContent = c.title || 'MY APP CENTER';
+    $('cSub').textContent = (c.apps.length || 0) + ' aplikasi publik';
+    var cats = {}; (c.categories || []).forEach(function (x) { cats[x.id] = x; });
+    $('cChips').innerHTML = '<button class="chip' + (!cat ? ' on' : '') + '" data-c="">Semua</button>' + (c.categories || []).filter(function (x) { return c.apps.some(function (a) { return a.category_id === x.id; }); })
+      .map(function (x) { return '<button class="chip' + (cat === x.id ? ' on' : '') + '" data-c="' + esc(x.id) + '">' + esc(x.icon) + ' ' + esc(x.name) + '</button>'; }).join('');
+    var list = c.apps.filter(function (a) {
+      var s = [a.name, a.description, a.tags, (cats[a.category_id] || {}).name].join(' ').toLowerCase();
+      return (!cat || a.category_id === cat) && (!q || q.split(/\s+/).every(function (w) { return s.indexOf(w) >= 0; }));
+    }).sort(function (a, b) { return String(a.name).localeCompare(String(b.name)); });
+    $('cGrid').innerHTML = list.length ? list.map(function (a) {
+      var url = /^https:\/\//.test(a.app_url || '') ? a.app_url : '';
+      return '<div class="card"><div class="h"><div class="ic">' + esc(a.icon || '📦') + '</div><div style="min-width:0"><b>' + esc(a.name) + '</b><small>' + esc((cats[a.category_id] || {}).name || '') + ' · v' + esc(a.version) + '</small></div></div>' +
+        '<p>' + esc(a.description || '') + '</p>' + (url ? '<a class="open" href="' + esc(url) + '" target="_blank" rel="noopener">Buka Aplikasi</a>' : '') + '</div>';
+    }).join('') : '<div class="empty">' + (catalog ? 'Tidak ada aplikasi yang cocok.' : 'Belum ada katalog tersimpan. Buka sekali saat online agar katalog tersedia offline.') + '</div>';
+    var off = !navigator.onLine;
+    $('cNote').classList.toggle('hidden', !off && !!catalog);
+    $('cNote').innerHTML = off ? '📴 Anda sedang offline. Daftar ditampilkan dari cache' + (c._cached_at ? ' (' + new Date(c._cached_at).toLocaleString('id-ID') + ')' : '') + '. Aplikasi GAS memerlukan internet untuk dibuka.' : 'Katalog belum tersedia.';
+    $('cClose').classList.toggle('hidden', off || !GAS);
+  }
+  $('cQ').addEventListener('input', drawCatalog);
+  $('cChips').addEventListener('click', function (e) { var b = e.target.closest('[data-c]'); if (b) { cat = b.getAttribute('data-c'); drawCatalog(); } });
+  $('cClose').onclick = function () { showCatalog(false); };
+  $('btnCat').onclick = function () { showCatalog(true); };
+  function showCatalog(on) {
+    $('cat').classList.toggle('hidden', !on);
+    if (on) { drawCatalog(); } else if (!frameLoaded && GAS && navigator.onLine) openPortal();
+  }
+
+  /* ---------- Portal GAS (iframe) ---------- */
+  function openPortal() {
+    $('splash').classList.remove('hidden'); $('splashTxt').textContent = 'Memuat MY APP CENTER…';
+    var f = $('frame'), timer = setTimeout(function () {
+      if (!frameLoaded) { $('splashTxt').textContent = 'Koneksi lambat… menampilkan katalog cepat'; showCatalog(true); $('splash').classList.add('hidden'); }
+    }, 15000);
+    f.onload = function () { frameLoaded = true; clearTimeout(timer); f.classList.remove('hidden'); $('splash').classList.add('hidden'); $('fab').classList.remove('hidden'); };
+    f.src = GAS;
+  }
+  function start() {
+    if (!GAS) { $('splash').classList.add('hidden'); $('setup').classList.remove('hidden'); return; }
+    if (!navigator.onLine || qs.get('mode') === 'catalog') { $('splash').classList.add('hidden'); $('fab').classList.remove('hidden'); showCatalog(true); }
+    else openPortal();
+    fetchCatalog();
+  }
+  $('sGo').onclick = function () {
+    var u = $('sUrl').value.trim();
+    if (!validGas(u)) return toast('URL tidak valid. Contoh: https://script.google.com/macros/s/ID/exec', 3500);
+    LS.set('gas', u); GAS = u; $('setup').classList.add('hidden'); start();
+  };
+  window.addEventListener('offline', function () { toast('Offline — beralih ke katalog tersimpan'); showCatalog(true); });
+  window.addEventListener('online', function () { toast('Kembali online'); fetchCatalog(); if (!frameLoaded) { showCatalog(false); } else drawCatalog(); });
+  start();
+})();
+</script>
+</body>
+</html>
